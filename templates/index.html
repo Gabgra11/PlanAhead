@@ -19,7 +19,7 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <ul class="navbar-nav me-auto mb-2 w-auto mb-lg-0">
           <li class="nav-item">
             <a class="nav-link" href="#">Tags</a>
           </li>
@@ -32,28 +32,38 @@
     </div>
   </nav>
 
-  
+  <br>
 
-  <div class="card-columns">
+  <div class="d-flex justify-content-center w-100">
+    <form method="POST" class="form-inline w-50">
+      <input class="form-control form-control-lg" type="text" name="title" placeholder="New note">
+    </form>
+  </div>
+    
+  <br>
+  
+  <div class="row m-3">
     {% for note in notes %}
-    {% if note.style == "light_red" %}
-      <div class="card text-white bg-light_red mb-3" style="width: 18rem;">
-    {% elif note.style == "light_orange" %}
-      <div class="card text-white bg-light_orange mb-3" style="width: 18rem;">
-    {% elif note.style == "light_yellow" %}
-      <div class="card text-white bg-light_yellow mb-3" style="width: 18rem;">
-    {% elif note.style == "light_green" %}
-      <div class="card text-white bg-light_green mb-3" style="width: 18rem;">
-    {% elif note.style == "light_blue" %}
-      <div class="card text-white bg-light_blue mb-3" style="width: 18rem;">
-    {% elif note.style == "light_purple" %}
-      <div class="card text-white bg-light_purple mb-3" style="width: 18rem;">
-    {% else %}
-      <div class="card" style="width: 18rem;">
-    {% endif %}
-      <div class="card-body">
-        <h5 class="card-title">{{ note.title }}</h5>
-        <p class="card-text">{{ note.body }}</p>
+    <div class="col col-lg-auto">
+      {% if note.style == "light_red" %}
+        <div class="card text-white bg-light_red mb-2 w-auto" style="width: 18rem;">
+      {% elif note.style == "light_orange" %}
+        <div class="card text-white bg-light_orange mb-2 w-auto" style="width: 18rem;">
+      {% elif note.style == "light_yellow" %}
+        <div class="card text-white bg-light_yellow mb-2 w-auto" style="width: 18rem;">
+      {% elif note.style == "light_green" %}
+        <div class="card text-white bg-light_green mb-2 w-auto" style="width: 18rem;">
+      {% elif note.style == "light_blue" %}
+        <div class="card text-white bg-light_blue mb-2 w-auto" style="width: 18rem;">
+      {% elif note.style == "light_purple" %}
+        <div class="card text-white bg-light_purple mb-2 w-auto" style="width: 18rem;">
+      {% else %}
+        <div class="card" style="width: 18rem;">
+      {% endif %}
+        <div class="card-body">
+          <h5 class="card-title">{{ note.title }}</h5>
+          <p class="card-text">{{ note.body }}</p>
+        </div>
       </div>
     </div>
     {% endfor %}
