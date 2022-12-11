@@ -4,7 +4,6 @@ TODO: Update existing cards when tag is modified
 TODO: Enforce unique tag names
 TODO: Implement search note/tage feature
 TODO: Click on note to edit
-TODO: Tag-based styling (text color)
 TODO: Click on tag to sort by tag
 TODO: Light/Dark mode toggle
 TODO: DB integration
@@ -45,8 +44,17 @@ def tags():
                     t.name = request.form["tag_name_input"]
                     t.background_color = request.form["bg_color_select"]
         elif request.form["post_type"] == "new_tag":
-            curr_user.tags.append(tag.Tag("", "", ""))
-    
+            curr_user.tags.insert(0, tag.Tag("", "", ""))
+        for n in curr_user.notes:
+            n.parse_title()
+    else:
+        to_remove = []
+        for t in curr_user.tags:
+            if t.name == "":
+                to_remove.append(t)
+        for t in to_remove: 
+            curr_user.tags.remove(t)
+
     return render_template("tags.html", tag_list = curr_user.tags, bg_colors = tag.Tag.bg_colors)
 
 if __name__ == "__main__":

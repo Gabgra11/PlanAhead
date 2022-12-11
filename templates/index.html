@@ -30,7 +30,8 @@
         <div class="card" style="width: 18rem;">
       {% endif %}
         <div class="card-body">
-          <h5 class="card-title">{{ note.title }}</h5>
+          <h5 class="bg-white opacity-25 text-black w-auto d-inline p-1 rounded">{{ note.tag.name }}</h5>
+          <h5 class="card-title d-inline">{{ note.title[note.title_index:] }}</h5>
           <p class="card-text">{{ note.body }}</p>
         </div>
       </div>
