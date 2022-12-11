@@ -10,7 +10,6 @@ class Note:
 
     def parse_title(self):
         for t in self.user.tags:
-            print(t.name)
             if t.name in self.title:
                 self.tag = t
                 return

@@ -1,6 +1,7 @@
 '''
 TODO: Figure out how to directly input class string with Jinja
-TODO: Add tag editor page
+TODO: Update existing cards when tag is modified
+TODO: Enforce unique tag names
 TODO: Implement search note/tage feature
 TODO: Click on note to edit
 TODO: Tag-based styling (text color)
@@ -38,10 +39,13 @@ def tags():
     global curr_user
 
     if request.method == "POST":
-        for t in curr_user.tags:
-            if t.name == request.form["tag_name"]:
-                t.name = request.form["tag_name_input"]
-                t.background_color = request.form["bg_color_select"]
+        if request.form["post_type"] == "update":
+            for t in curr_user.tags:
+                if t.name == request.form["tag_name"]:
+                    t.name = request.form["tag_name_input"]
+                    t.background_color = request.form["bg_color_select"]
+        elif request.form["post_type"] == "new_tag":
+            curr_user.tags.append(tag.Tag("", "", ""))
     
     return render_template("tags.html", tag_list = curr_user.tags, bg_colors = tag.Tag.bg_colors)
 
