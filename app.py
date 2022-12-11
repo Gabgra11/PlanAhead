@@ -12,20 +12,27 @@ TODO: Calendar view
 '''
 
 from flask import Flask, render_template, request
-from scripts import notes
+from scripts import note, tag, user
 
 app = Flask(__name__)
 
-user_notes = [notes.Note("Test", "Hello World!", "light_red"), notes.Note("Foo", "Bar", "light_green")]
+# For testing purposes:
+curr_user = user.User()
+t1 = tag.Tag("CS 374", "light_blue", "white")
+t2 = tag.Tag("CS 411", "light_purple", "white")
+t3 = tag.Tag("CS 412", "light_green", "white")
+t4 = tag.Tag("CS 418", "light_yellow", "white")
+curr_user.add_tags([t1, t2, t3, t4])
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    global user_notes
-    if request.method == "POST":
-        user_notes.append(notes.Note(request.form["title"], "", "light_blue"))
+    global curr_user
 
+    if request.method == "POST":
+        new_note = note.Note(request.form["title"], "", curr_user)
+        curr_user.add_note(new_note)
     
-    return render_template("index.html", notes=user_notes)
+    return render_template("index.html", notes=curr_user.notes)
 
 if __name__ == "__main__":
     app.run
