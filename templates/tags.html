@@ -1,0 +1,44 @@
+{%extends "base.html" %}
+
+{% block content %}
+<div class="row m-3">
+    {% for tag in tag_list %}
+    <div class="col col-lg-auto">
+        {% if tag.background_color == "light_red" %}
+        <div class="card text-white bg-light_red mb-2 w-auto" style="width: 18rem;">
+        {% elif tag.background_color == "light_orange" %}
+        <div class="card text-white bg-light_orange mb-2 w-auto" style="width: 18rem;">
+        {% elif tag.background_color == "light_yellow" %}
+        <div class="card text-white bg-light_yellow mb-2 w-auto" style="width: 18rem;">
+        {% elif tag.background_color == "light_green" %}
+        <div class="card text-white bg-light_green mb-2 w-auto" style="width: 18rem;">
+        {% elif tag.background_color == "light_blue" %}
+        <div class="card text-white bg-light_blue mb-2 w-auto" style="width: 18rem;">
+        {% elif tag.background_color == "light_purple" %}
+        <div class="card text-white bg-light_purple mb-2 w-auto" style="width: 18rem;">
+        {% else %}
+        <div class="card" style="width: 18rem;">
+        {% endif %}
+            <div class="card-body">
+                <div class="form-group">
+                    <form method="POST">
+                        <input type="hidden" name="tag_name" value="{{ tag.name }}">
+                        <input type="text" class="form-control" name="tag_name_input" value="{{ tag.name }}">
+                        <br>
+                        <select class="form-control" name="bg_color_select" onchange="this.form.submit()">
+                            {% for color in bg_colors %}
+                                {% if tag.background_color == color %}
+                                    <option selected>{{ color }}</option>
+                                {% else %}
+                                    <option>{{ color }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

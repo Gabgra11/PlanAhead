@@ -1,10 +1,9 @@
 '''
 TODO: Figure out how to directly input class string with Jinja
-TODO: Implement create new note form
 TODO: Add tag editor page
 TODO: Implement search note/tage feature
 TODO: Click on note to edit
-TODO: Tag-based styling
+TODO: Tag-based styling (text color)
 TODO: Click on tag to sort by tag
 TODO: Light/Dark mode toggle
 TODO: DB integration
@@ -33,6 +32,18 @@ def home():
         curr_user.add_note(new_note)
     
     return render_template("index.html", notes=curr_user.notes)
+
+@app.route("/tags", methods=["GET", "POST"])
+def tags():
+    global curr_user
+
+    if request.method == "POST":
+        for t in curr_user.tags:
+            if t.name == request.form["tag_name"]:
+                t.name = request.form["tag_name_input"]
+                t.background_color = request.form["bg_color_select"]
+    
+    return render_template("tags.html", tag_list = curr_user.tags, bg_colors = tag.Tag.bg_colors)
 
 if __name__ == "__main__":
     app.run
