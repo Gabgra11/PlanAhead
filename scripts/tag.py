@@ -5,3 +5,9 @@ class Tag:
         self.name = name
         self.background_color = background_color
         self.text_color = text_color
+
+    def get_tag_by_name(tags_list, tag_name):
+        for t in tags_list:
+            if t.name == tag_name:
+                return t
+        return Tag("", "", "")

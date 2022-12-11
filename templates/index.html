@@ -5,10 +5,29 @@
 
   <div class="d-flex justify-content-center w-100">
     <form method="POST" class="form-inline w-50">
+      <input type="hidden" name="post_type" value="new_note">
       <input class="form-control form-control-lg" type="text" name="title" placeholder="New note">
     </form>
   </div>
     
+  <br>
+
+  <div class="d-flex justify-content-center d-inline">
+    {% for f in filter_tags %}
+      <div>
+        <form method="POST" class="d-inline">
+          <input type="hidden" name="post_type" value="remove_filter">
+          <input type="hidden" name="tag_name" value="{{ f }}">
+          <button type="submit" class="btn btn-secondary">x</button>
+        </form>
+        <p class="d-inline">
+          {{ f }}
+        </p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
   <br>
   
   <div class="row m-3">
@@ -30,7 +49,11 @@
         <div class="card" style="width: 18rem;">
       {% endif %}
         <div class="card-body">
-          <h5 class="bg-white opacity-25 text-black w-auto d-inline p-1 rounded">{{ note.tag.name }}</h5>
+          <form method="POST" class="d-inline">
+            <input type="hidden" name="post_type" value="filter_by_tag">
+            <input type="hidden" name="tag_name" value="{{ note.tag.name }}">
+            <button type="submit" class="bg-white opacity-25 text-black w-auto d-inline p-1 rounded border-0">{{ note.tag.name }}</button>
+          </form>
           <h5 class="card-title d-inline">{{ note.title[note.title_index:] }}</h5>
           <p class="card-text">{{ note.body }}</p>
         </div>
