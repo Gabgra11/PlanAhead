@@ -11,3 +11,11 @@ class Tag:
             if t.name == tag_name:
                 return t
         return Tag("", "", "")
+
+    def remove_empty_tags(tags_list):
+        to_remove = []
+        for t in tags_list:
+            if t.name == "":
+                to_remove.append(t)
+        for t in to_remove:
+            tags_list.remove(t)

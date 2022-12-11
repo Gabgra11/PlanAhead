@@ -18,4 +18,8 @@ class Note:
                 return
         self.title_index = 0
         self.tag = None
+
+    def refresh_tags(notes_list):
+        for n in notes_list:
+            n.parse_title()
     
