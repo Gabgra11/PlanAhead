@@ -1,9 +1,7 @@
 '''
-TODO: Fix spacing on tag editor page between rows
-TODO: Add delete button to notes on hover
+TODO: Add delete button to notes
 TODO: Figure out how to directly input class string with Jinja
 TODO: Enforce unique tag names
-TODO: Implement search feature
 TODO: Click on note to edit
 TODO: Light/Dark mode toggle
 TODO: DB integration
