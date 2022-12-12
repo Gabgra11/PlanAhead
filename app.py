@@ -1,6 +1,6 @@
 '''
 TODO: Fix spacing on tag editor page between rows
-TODO: Add delete button to notes
+TODO: Add delete button to notes on hover
 TODO: Figure out how to directly input class string with Jinja
 TODO: Enforce unique tag names
 TODO: Implement search feature
@@ -38,15 +38,22 @@ def home():
             filters.add(request.form["tag_name"])
             notes_list = search.filter_by_tags(curr_user.notes, filters)
         elif request.form["post_type"] == "remove_filter":
-            print(filters)
             filters.remove(request.form["tag_name"])
-            print(filters)
             notes_list = search.filter_by_tags(curr_user.notes, filters)
         elif request.form["post_type"] == "new_note":
             new_note = note.Note(request.form["title"], "", curr_user)
             curr_user.add_note(new_note)
+        elif request.form["post_type"] == "search_notes":
+            query = request.form["query"].strip() 
+            if len(query) > 0:
+                filters.add(query)
+                notes_list = search.filter_by_text(curr_user.notes, query)
+    else:
+        filters.clear()
+
     tag.Tag.remove_empty_tags(curr_user.tags)
     note.Note.refresh_tags(curr_user.notes)
+
     return render_template("index.html", notes=notes_list, filter_tags=filters)
 
 @app.route("/tags", methods=["GET", "POST"])
@@ -65,8 +72,7 @@ def tags():
         tag.Tag.remove_empty_tags(curr_user.tags)
         note.Note.refresh_tags(curr_user.notes)
         
-
     return render_template("tags.html", tag_list = curr_user.tags, bg_colors = tag.Tag.bg_colors)
 
 if __name__ == "__main__":
-    app.run
+    app.run()

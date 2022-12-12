@@ -13,6 +13,6 @@ def filter_by_tags(notes_list, tag_names_list):
 def filter_by_text(notes_list, query):
     result = []
     for n in notes_list:
-        if query in n.title:
+        if query.lower() in n.title.lower():
             result.append(n)
     return result
