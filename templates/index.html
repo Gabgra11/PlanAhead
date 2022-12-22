@@ -48,14 +48,19 @@
       {% else %}
         <div class="card" style="width: 18rem;">
       {% endif %}
-        <div class="card-body">
-          <form method="POST" class="d-inline">
+        <div class="card-body d-flex">
+          <form method="POST">
             <input type="hidden" name="post_type" value="filter_by_tag">
             <input type="hidden" name="tag_name" value="{{ note.tag.name }}">
-            <button type="submit" class="bg-white opacity-25 text-black w-auto d-inline p-1 rounded border-0">{{ note.tag.name }}</button>
+            <button type="submit" class="bg-white opacity-25 text-black w-auto d-inline p-1 rounded border-0 me-2">{{ note.tag.name }}</button>
           </form>
-          <h5 class="card-title d-inline">{{ note.title[note.title_index:] }}</h5>
+          <h5 class="card-title d-inline me-auto my-1">{{ note.title[note.title_index:] }}</h5>
           <p class="card-text">{{ note.body }}</p>
+          <form method="POST">
+            <input type="hidden" name="post_type" value="delete_note">
+            <input type="hidden" name="note_title" value="{{ note.title }}">
+            <button type="submit" class="btn btn-secondary d-inline ms-3">x</button>
+          </form>
         </div>
       </div>
     </div>

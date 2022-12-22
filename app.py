@@ -1,5 +1,6 @@
 '''
-TODO: Add delete button to notes
+TODO: Add delete button to tags
+TODO: Optional warning when deleting notes/tags
 TODO: Figure out how to directly input class string with Jinja
 TODO: Enforce unique tag names
 TODO: Click on note to edit
@@ -46,6 +47,10 @@ def home():
             if len(query) > 0:
                 filters.add(query)
                 notes_list = search.filter_by_text(curr_user.notes, query)
+        elif request.form["post_type"] == "delete_note":
+            n = search.find_note_with_title(notes_list, request.form["note_title"])
+            if n != None:
+                notes_list.remove(n)
     else:
         filters.clear()
 

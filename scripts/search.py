@@ -16,3 +16,9 @@ def filter_by_text(notes_list, query):
         if query.lower() in n.title.lower():
             result.append(n)
     return result
+
+def find_note_with_title(notes_list, note_title):
+    for n in notes_list:
+        if n.title == note_title:
+            return n
+    return None
