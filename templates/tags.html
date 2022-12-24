@@ -48,6 +48,12 @@
                         </select>
                     </form>
                 </div>
+                <br>
+                <form method="POST">
+                    <input type="hidden" name="post_type" value="delete_tag">
+                    <input type="hidden" name="tag_name" value="{{ tag.name }}">
+                    <button type="submit" class="btn btn-secondary d-inline">Remove</button>
+                </form>
             </div>
         </div>
     </div>

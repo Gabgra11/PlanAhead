@@ -1,5 +1,4 @@
 '''
-TODO: Add delete button to tags
 TODO: Optional warning when deleting notes/tags
 TODO: Figure out how to directly input class string with Jinja
 TODO: Enforce unique tag names
@@ -71,6 +70,10 @@ def tags():
                     t.background_color = request.form["bg_color_select"]
         elif request.form["post_type"] == "new_tag":
             curr_user.tags.insert(0, tag.Tag("", "", ""))
+        elif request.form["post_type"] == "delete_tag":
+            t = search.find_tag_with_name(curr_user.tags, request.form["tag_name"])
+            if t != None:
+                curr_user.tags.remove(t)
     else:
         tag.Tag.remove_empty_tags(curr_user.tags)
         note.Note.refresh_tags(curr_user.notes)

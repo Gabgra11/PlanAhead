@@ -22,3 +22,9 @@ def find_note_with_title(notes_list, note_title):
         if n.title == note_title:
             return n
     return None
+
+def find_tag_with_name(tags_list, tag_name):
+    for t in tags_list:
+        if t.name == tag_name:
+            return t
+    return None
