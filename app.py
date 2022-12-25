@@ -1,7 +1,7 @@
 '''
+TODO: Assign unique id to each note and tag
 TODO: Optional warning when deleting notes/tags
 TODO: Figure out how to directly input class string with Jinja
-TODO: Enforce unique tag names
 TODO: Click on note to edit
 TODO: Light/Dark mode toggle
 TODO: DB integration
@@ -66,10 +66,14 @@ def tags():
         if request.form["post_type"] == "update":
             for t in curr_user.tags:
                 if t.name == request.form["tag_name"]:
-                    t.name = request.form["tag_name_input"]
-                    t.background_color = request.form["bg_color_select"]
+                    if tag.Tag.name_is_unique(curr_user.tags, request.form["tag_name"]):
+                        t.name = request.form["tag_name_input"]
+                        t.background_color = request.form["bg_color_select"]
+                    else:
+                        # TODO: Display unique tag name error message
+                        print("TODO: Display unique tag name error message")
         elif request.form["post_type"] == "new_tag":
-            curr_user.tags.insert(0, tag.Tag("", "", ""))
+            tag.Tag.add_blank_tag(curr_user.tags)
         elif request.form["post_type"] == "delete_tag":
             t = search.find_tag_with_name(curr_user.tags, request.form["tag_name"])
             if t != None:

@@ -19,3 +19,18 @@ class Tag:
                 to_remove.append(t)
         for t in to_remove:
             tags_list.remove(t)
+
+    def add_blank_tag(tags_list):
+        # Check for existing blank tag:
+        for t in tags_list:
+            if t.name == "" and t.background_color == "" and t.text_color == "":
+                # Blank tag already exists
+                return
+        new_tag = Tag("", "", "")
+        tags_list.insert(0, new_tag)
+        
+    def name_is_unique(tags_list, name):
+        for t in tags_list:
+            if t.name == name:
+                return False
+        return True
