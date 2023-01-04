@@ -2,7 +2,6 @@
 TODO: Assign unique id to each note and tag
 TODO: Optional warning when deleting notes/tags
 TODO: Figure out how to directly input class string with Jinja
-TODO: Click on note to edit
 TODO: Light/Dark mode toggle
 TODO: DB integration
 TODO: Calendar view
@@ -50,13 +49,23 @@ def home():
             n = search.find_note_with_title(notes_list, request.form["note_title"])
             if n != None:
                 notes_list.remove(n)
+        elif request.form["post_type"] == "edit_note":
+            n = search.find_note_with_title(notes_list, request.form["note_title"])
+            if n != None:
+                n.editing = True
+        elif request.form["post_type"] == "new_note_values":
+            n = search.find_note_with_title(notes_list, request.form["old_note_title"])
+            if n != None:
+                n.editing = False
+                n.title = request.form["tag_select"] + " " + request.form["new_note_title"]
+                n.parse_title()
     else:
         filters.clear()
 
     tag.Tag.remove_empty_tags(curr_user.tags)
     note.Note.refresh_tags(curr_user.notes)
 
-    return render_template("index.html", notes=notes_list, filter_tags=filters)
+    return render_template("index.html", notes=notes_list, filter_tags=filters, tags_list=curr_user.tags)
 
 @app.route("/tags", methods=["GET", "POST"])
 def tags():

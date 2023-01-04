@@ -32,38 +32,86 @@
   
   <div class="row m-3">
     {% for note in notes %}
-    <div class="col col-lg-auto my-2">
-      {% if note.tag.background_color == "light_red" %}
-        <div class="card text-white bg-light_red mb-2 w-auto" style="width: 18rem;">
-      {% elif note.tag.background_color == "light_orange" %}
-        <div class="card text-white bg-light_orange mb-2 w-auto" style="width: 18rem;">
-      {% elif note.tag.background_color == "light_yellow" %}
-        <div class="card text-white bg-light_yellow mb-2 w-auto" style="width: 18rem;">
-      {% elif note.tag.background_color == "light_green" %}
-        <div class="card text-white bg-light_green mb-2 w-auto" style="width: 18rem;">
-      {% elif note.tag.background_color == "light_blue" %}
-        <div class="card text-white bg-light_blue mb-2 w-auto" style="width: 18rem;">
-      {% elif note.tag.background_color == "light_purple" %}
-        <div class="card text-white bg-light_purple mb-2 w-auto" style="width: 18rem;">
-      {% else %}
-        <div class="card" style="width: 18rem;">
-      {% endif %}
-        <div class="card-body d-flex">
-          <form method="POST">
-            <input type="hidden" name="post_type" value="filter_by_tag">
-            <input type="hidden" name="tag_name" value="{{ note.tag.name }}">
-            <button type="submit" class="bg-white opacity-25 text-black w-auto d-inline p-1 rounded border-0 me-2">{{ note.tag.name }}</button>
-          </form>
-          <h5 class="card-title d-inline me-auto my-1">{{ note.title[note.title_index:] }}</h5>
-          <p class="card-text">{{ note.body }}</p>
-          <form method="POST">
-            <input type="hidden" name="post_type" value="delete_note">
-            <input type="hidden" name="note_title" value="{{ note.title }}">
-            <button type="submit" class="btn btn-secondary d-inline ms-3">x</button>
-          </form>
+      {% if note.editing %}
+        <div class="col col-lg-auto my-2">
+          {% if note.tag.background_color == "light_red" %}
+            <div class="card text-white bg-light_red mb-2 w-auto" style="width: 18rem;">
+          {% elif note.tag.background_color == "light_orange" %}
+            <div class="card text-white bg-light_orange mb-2 w-auto" style="width: 18rem;">
+          {% elif note.tag.background_color == "light_yellow" %}
+            <div class="card text-white bg-light_yellow mb-2 w-auto" style="width: 18rem;">
+          {% elif note.tag.background_color == "light_green" %}
+            <div class="card text-white bg-light_green mb-2 w-auto" style="width: 18rem;">
+          {% elif note.tag.background_color == "light_blue" %}
+            <div class="card text-white bg-light_blue mb-2 w-auto" style="width: 18rem;">
+          {% elif note.tag.background_color == "light_purple" %}
+            <div class="card text-white bg-light_purple mb-2 w-auto" style="width: 18rem;">
+          {% else %}
+            <div class="card" style="width: 18rem;">
+          {% endif %}
+            <div class="card-body d-flex">
+
+              <form method="POST">
+                <input type="hidden" name="post_type" value="new_note_values">
+                <input type="hidden" name="old_note_title" value="{{ note.title }}">
+
+                <select class="form-control" name="tag_select">
+                  <option selected></option>
+                  {% for tag in tags_list %}
+                    {% if tag.name == note.tag.name %}
+                      <option selected>{{ tag.name }}</option>
+                    {% else %}
+                      <option>{{ tag.name }}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+                <input type="text" name="new_note_title" value="{{ note.title[note.title_index:].strip() }}">
+                <button type="submit" class="btn btn-primary d-inline ms-3">Update</button>
+              </form>
+              <form method="POST">
+                <input type="hidden" name="post_type" value="delete_note">
+                <input type="hidden" name="note_title" value="{{ note.title }}">
+                <button type="submit" class="btn btn-secondary d-inline ms-3">x</button>
+              </form>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+
+      {% else %}
+        <div class="col col-lg-auto my-2">
+          {% if note.tag.background_color == "light_red" %}
+            <div class="card text-white bg-light_red mb-2 w-auto" style="width: 18rem;">
+          {% elif note.tag.background_color == "light_orange" %}
+            <div class="card text-white bg-light_orange mb-2 w-auto" style="width: 18rem;">
+          {% elif note.tag.background_color == "light_yellow" %}
+            <div class="card text-white bg-light_yellow mb-2 w-auto" style="width: 18rem;">
+          {% elif note.tag.background_color == "light_green" %}
+            <div class="card text-white bg-light_green mb-2 w-auto" style="width: 18rem;">
+          {% elif note.tag.background_color == "light_blue" %}
+            <div class="card text-white bg-light_blue mb-2 w-auto" style="width: 18rem;">
+          {% elif note.tag.background_color == "light_purple" %}
+            <div class="card text-white bg-light_purple mb-2 w-auto" style="width: 18rem;">
+          {% else %}
+            <div class="card" style="width: 18rem;">
+          {% endif %}
+            <div class="card-body d-flex">
+              <form method="POST">
+                <input type="hidden" name="post_type" value="edit_note">
+                <input type="hidden" name="note_title" value="{{ note.title }}">
+                <button type="submit" class="stretched-link" style="padding:0px;border:0px;">
+                  <form method="POST">
+                    <input type="hidden" name="post_type" value="filter_by_tag">
+                    <input type="hidden" name="tag_name" value="{{ note.tag.name }}">
+                    <button type="submit" class="bg-white opacity-25 text-black w-auto d-inline p-1 rounded border-0 me-2">{{ note.tag.name }}</button>
+                  </form>
+                  <h5 class="card-title d-inline me-auto my-1">{{ note.title[note.title_index:] }}</h5>
+                  <p class="card-text">{{ note.body }}</p>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+    {% endif %}
     {% endfor %}
   </div>
 {% endblock %}

@@ -6,7 +6,8 @@ class Note:
         self.title_index = 0
         self.body = body
         self.user = user
-        self.tag = None # Is this needed?
+        self.tag = None
+        self.editing = False
         self.parse_title()
 
     def parse_title(self):
