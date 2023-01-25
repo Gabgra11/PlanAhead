@@ -1,97 +1,91 @@
 '''
-TODO: Assign unique id to each note and tag
+TODO: Prevent duplicate tag names
+TODO: Tag name should not be a prefix of another tag
+TODO: Cache notes and tags, only update local version when changes are made.
 TODO: Optional warning when deleting notes/tags
-TODO: Figure out how to directly input class string with Jinja
-TODO: Light/Dark mode toggle
-TODO: DB integration
+TODO: Don't hard code color options
 TODO: Calendar view
 '''
 
 from flask import Flask, render_template, request
-from scripts import note, tag, user, search
+from scripts import note, tag, search, db, tagparser
+import sqlite3
 
 app = Flask(__name__)
 
-# For testing purposes:
-curr_user = user.User()
-t1 = tag.Tag("CS 374", "light_blue", "white")
-t2 = tag.Tag("CS 411", "light_purple", "white")
-t3 = tag.Tag("CS 412", "light_green", "white")
-t4 = tag.Tag("CS 418", "light_yellow", "white")
-curr_user.add_tags([t1, t2, t3, t4])
+notes_list = []
+tags_list = []
 
-filters = set()
+def get_db_connection():
+    conn = sqlite3.connect('db/database.db')
+    conn.row_factory = sqlite3.Row
+    return conn
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-    global curr_user
-    global filters
+    global notes_list
+    global tags_list
 
-    notes_list = curr_user.notes
+    filter_list = []
+    conn = get_db_connection()
+    notes_list = db.get_notes_list(conn)
 
     if request.method == "POST":
-        print(request.form["post_type"])
-        if request.form["post_type"] == "filter_by_tag":
-            filters.add(request.form["tag_name"])
-            notes_list = search.filter_by_tags(curr_user.notes, filters)
-        elif request.form["post_type"] == "remove_filter":
-            filters.remove(request.form["tag_name"])
-            notes_list = search.filter_by_tags(curr_user.notes, filters)
-        elif request.form["post_type"] == "new_note":
-            new_note = note.Note(request.form["title"], "", curr_user)
-            curr_user.add_note(new_note)
-        elif request.form["post_type"] == "search_notes":
-            query = request.form["query"].strip() 
-            if len(query) > 0:
-                filters.add(query)
-                notes_list = search.filter_by_text(curr_user.notes, query)
-        elif request.form["post_type"] == "delete_note":
-            n = search.find_note_with_title(notes_list, request.form["note_title"])
-            if n != None:
-                notes_list.remove(n)
-        elif request.form["post_type"] == "edit_note":
-            n = search.find_note_with_title(notes_list, request.form["note_title"])
-            if n != None:
-                n.editing = True
-        elif request.form["post_type"] == "new_note_values":
-            n = search.find_note_with_title(notes_list, request.form["old_note_title"])
-            if n != None:
-                n.editing = False
-                n.title = request.form["tag_select"] + " " + request.form["new_note_title"]
-                n.parse_title()
-    else:
-        filters.clear()
+        match request.form["post_type"]:
+            case "new_note":
+                title = request.form["title"]
+                t = tagparser.parse_title_for_tag(title, tags_list)
+                n = note.Note(title, "", t)  # TODO: Add body
+                n.id = db.add_new_note(conn, n)
+                notes_list.append(n)
+            case "filter_by_tag":
+                new_filter_id = request.form['filter_tag']
+                filter_list.append(db.get_tag_by_id(conn, new_filter_id))
+                notes_list = search.filter_by_tags(notes_list, filter_list)
+            case "edit_mode":
+                note_id = request.form['note_id']
+                for i in range(len(notes_list)):
+                    if notes_list[i].id == int(note_id):
+                        notes_list[i].editing = True
+            case "edit_note":
+                note_id = request.form['note_id']
+                new_title = request.form['new_title']
+                new_tag = db.get_tag_by_id(conn, request.form['new_tag'])
+                new_body = request.form['new_body']
+                new_note = note.Note(new_title, new_body, new_tag, note_id)
+                db.update_note(conn, note_id, new_note)
+                notes_list = note.Note.update_notes_list(notes_list, note_id, new_note)
 
-    tag.Tag.remove_empty_tags(curr_user.tags)
-    note.Note.refresh_tags(curr_user.notes)
 
-    return render_template("index.html", notes=notes_list, filter_tags=filters, tags_list=curr_user.tags)
+    return render_template("index.html", notes=notes_list, filter_list=filter_list, tags_list=db.get_tags_list(conn))
 
 @app.route("/tags", methods=["GET", "POST"])
 def tags():
-    global curr_user
+    global tags_list
 
-    if request.method == "POST":
-        if request.form["post_type"] == "update":
-            for t in curr_user.tags:
-                if t.name == request.form["tag_name"]:
-                    if tag.Tag.name_is_unique(curr_user.tags, request.form["tag_name"]):
-                        t.name = request.form["tag_name_input"]
-                        t.background_color = request.form["bg_color_select"]
-                    else:
-                        # TODO: Display unique tag name error message
-                        print("TODO: Display unique tag name error message")
-        elif request.form["post_type"] == "new_tag":
-            tag.Tag.add_blank_tag(curr_user.tags)
-        elif request.form["post_type"] == "delete_tag":
-            t = search.find_tag_with_name(curr_user.tags, request.form["tag_name"])
-            if t != None:
-                curr_user.tags.remove(t)
-    else:
-        tag.Tag.remove_empty_tags(curr_user.tags)
-        note.Note.refresh_tags(curr_user.notes)
-        
-    return render_template("tags.html", tag_list = curr_user.tags, bg_colors = tag.Tag.bg_colors)
+    conn = get_db_connection()
+    if request.method == 'POST':
+        match request.form['post_type']:
+            case "new_tag":
+                tag_name = request.form['tag_name']
+                if len(tag_name) > 0:   # Prevent blank tag names
+                    t = tag.Tag(tag_name)
+                    t.id = db.add_new_tag(conn, t)
+                    tags_list.append(t)
+            case "update_tag":  # TODO: Update the tags of all notes with old tag
+                tag_id = request.form['tag_id']
+                new_tag_name = request.form['new_tag_name']
+                new_bg_color = request.form['new_bg_color']
+                if len(new_tag_name) > 0:   # Prevent blank tag names
+                    new_tag = tag.Tag(new_tag_name, new_bg_color, tag_id)
+                    tags_list = tag.Tag.update_tags_list(tags_list, tag_id, new_tag)
+                    db.update_tag(conn, tag_id, new_tag)
+            case "delete_tag":
+                tag_id = request.form['tag_id']
+                tags_list = tag.Tag.remove_tag(tags_list, tag_id)
+                db.remove_tag(conn, tag_id)
+
+    return render_template("tags.html", bg_colors=tag.Tag.bg_colors, tags_list=db.get_tags_list(conn))
 
 if __name__ == "__main__":
     app.run()

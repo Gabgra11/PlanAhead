@@ -2,29 +2,32 @@
 
 {% block content %}
 <div class="row m-3">
-    <div class="col col-lg-auto">
-        <form method="POST" class="d-flex align-items-center h-100">
-            <input type="hidden" name="post_type" value="new_tag">
-            <button type="submit" class="card mb-2 w-auto h-auto px-5" style="width: 18rem;">
-                <div class="card-body">
-                    <h1>+</h1>
-                </div>
-            </button>
-        </form>
-    </div>
-    {% for tag in tag_list %}
     <div class="col col-lg-auto my-2">
-        {% if tag.background_color == "light_red" %}
+        <div class="card h-100" style="width: 18rem;">
+            <div class="card-body">
+                <div class="form-group">
+                    <form method="POST">
+                        <input type="hidden" name="post_type" value="new_tag">
+                        <input type="text" class="form-control" name="tag_name" placeholder="New Tag" onchange="this.form.submit()">
+                    </form>
+                </div>
+                <br>
+            </div>
+        </div>
+    </div>
+    {% for tag in tags_list %}
+    <div class="col col-lg-auto my-2">
+        {% if tag.bg_color == "light_red" %}
         <div class="card text-white bg-light_red mb-2 w-auto h-100" style="width: 18rem;">
-        {% elif tag.background_color == "light_orange" %}
+        {% elif tag.bg_color == "light_orange" %}
         <div class="card text-white bg-light_orange mb-2 w-auto h-100" style="width: 18rem;">
-        {% elif tag.background_color == "light_yellow" %}
+        {% elif tag.bg_color == "light_yellow" %}
         <div class="card text-white bg-light_yellow mb-2 w-auto h-100" style="width: 18rem;">
-        {% elif tag.background_color == "light_green" %}
+        {% elif tag.bg_color == "light_green" %}
         <div class="card text-white bg-light_green mb-2 w-auto h-100" style="width: 18rem;">
-        {% elif tag.background_color == "light_blue" %}
+        {% elif tag.bg_color == "light_blue" %}
         <div class="card text-white bg-light_blue mb-2 w-auto h-100" style="width: 18rem;">
-        {% elif tag.background_color == "light_purple" %}
+        {% elif tag.bg_color == "light_purple" %}
         <div class="card text-white bg-light_purple mb-2 w-auto h-100" style="width: 18rem;">
         {% else %}
         <div class="card h-100" style="width: 18rem;">
@@ -32,14 +35,14 @@
             <div class="card-body">
                 <div class="form-group">
                     <form method="POST">
-                        <input type="hidden" name="post_type" value="update">
-                        <input type="hidden" name="tag_name" value="{{ tag.name }}">
-                        <input type="text" class="form-control" name="tag_name_input" value="{{ tag.name }}" onchange="this.form.submit()">
+                        <input type="hidden" name="post_type" value="update_tag">
+                        <input type="hidden" name="tag_id" value="{{ tag.id }}">
+                        <input type="text" class="form-control" name="new_tag_name" value="{{ tag.tag_name }}" onchange="this.form.submit()">
                         <br>
-                        <select class="form-control" name="bg_color_select" onchange="this.form.submit()">
+                        <select class="form-control" name="new_bg_color" onchange="this.form.submit()">
                             <option selected>Select background color</option>
                             {% for color in bg_colors %}
-                                {% if tag.background_color == color %}
+                                {% if tag.bg_color == color %}
                                     <option selected>{{ color }}</option>
                                 {% else %}
                                     <option>{{ color }}</option>
@@ -51,7 +54,7 @@
                 <br>
                 <form method="POST">
                     <input type="hidden" name="post_type" value="delete_tag">
-                    <input type="hidden" name="tag_name" value="{{ tag.name }}">
+                    <input type="hidden" name="tag_id" value="{{ tag.id }}">
                     <button type="submit" class="btn btn-secondary d-inline">Remove</button>
                 </form>
             </div>

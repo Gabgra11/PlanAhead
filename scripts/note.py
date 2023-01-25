@@ -1,26 +1,13 @@
-from scripts import tag, user
-
 class Note:
-    def __init__(self, title, body, user):
-        self.title = title
-        self.title_index = 0
+    def __init__(self, title, body, tag=None, id=None):
+        self.id = id
+        self.title = title.strip()
         self.body = body
-        self.user = user
-        self.tag = None
+        self.tag = tag
         self.editing = False
-        self.parse_title()
 
-    def parse_title(self):
-        for t in self.user.tags:
-            tag_index = self.title.lower().find(t.name.lower())
-            if tag_index == 0:
-                self.tag = t
-                self.title_index = tag_index + len(t.name)
-                return
-        self.title_index = 0
-        self.tag = None
-
-    def refresh_tags(notes_list):
-        for n in notes_list:
-            n.parse_title()
-    
+    def update_notes_list(notes_list, nid, new_note):
+        for i in range(len(notes_list)):
+            if int(notes_list[i].id) == int(nid):
+                notes_list[i] = new_note
+        return notes_list
