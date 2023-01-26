@@ -1,5 +1,5 @@
 '''
-TODO: Prevent duplicate tag names
+TODO: Prevent duplicate tag names in update_tag case
 TODO: Tag name should not be a prefix of another tag
 TODO: Cache notes and tags, only update local version when changes are made.
 TODO: Optional warning when deleting notes/tags
@@ -70,8 +70,14 @@ def tags():
                 tag_name = request.form['tag_name']
                 if len(tag_name) > 0:   # Prevent blank tag names
                     t = tag.Tag(tag_name)
-                    t.id = db.add_new_tag(conn, t)
-                    tags_list.append(t)
+                    new_tag_id = db.add_new_tag(conn, t)
+                    if new_tag_id:
+                        t.id = new_tag_id
+                        tags_list.append(t)
+                    else:   # Tag name is not unique
+                        #TODO: Notify the user
+                        print("Tag name '%s' is not unique." %(t.tag_name))
+
             case "update_tag":  # TODO: Update the tags of all notes with old tag
                 tag_id = request.form['tag_id']
                 new_tag_name = request.form['new_tag_name']

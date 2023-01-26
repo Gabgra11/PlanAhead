@@ -40,3 +40,10 @@ def find_tag_with_id(tags_list, tid):
         if t.id == tid:
             return t
     return None
+
+# Return whether distinct tag in list has same name as new_tag:
+def check_duplicate_tag_names(tags_list, new_tag):
+    for t in tags_list:
+        if t.tag_name == new_tag.tag_name and str(t.id) != str(new_tag.id):
+            return True
+    return False

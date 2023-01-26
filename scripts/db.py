@@ -1,4 +1,4 @@
-from scripts import note, tag
+from scripts import note, tag, search
 
 # Returns the ID of the new note
 def add_new_note(conn, n):
@@ -11,12 +11,18 @@ def add_new_note(conn, n):
     conn.commit()
     return new_note_id
 
-# Returns the ID of the new tag
+# Returns the ID of the new tag, or None if tag name is a duplicate:
 def add_new_tag(conn, t):
-    command = 'INSERT INTO tags (tag_name, bg_color) VALUES (?, ?)'
-    new_tag_id = conn.execute(command, (str(t.tag_name), str(t.bg_color))).lastrowid
-    conn.commit()
-    return new_tag_id
+    existing_tags = get_tags_list(conn)
+    if search.check_duplicate_tag_names(existing_tags, t):
+        # TODO: Handle duplicate tag name
+        print("Tag name '%s' is a duplicate" %(t.tag_name))
+        return None
+    else:
+        command = 'INSERT INTO tags (tag_name, bg_color) VALUES (?, ?)'
+        new_tag_id = conn.execute(command, (str(t.tag_name), str(t.bg_color))).lastrowid
+        conn.commit()
+        return new_tag_id
 
 def get_note_by_id(conn, nid):
     command = 'SELECT * from notes where id = ?'
@@ -46,9 +52,13 @@ def update_note(conn, nid, new_note):
 
 # Replaces the tag with the given tag id with the contents of new_tag
 def update_tag(conn, tid, new_tag):
-    command = 'UPDATE tags SET tag_name = ?, bg_color = ? WHERE id = ?'
-    conn.execute(command, (str(new_tag.tag_name), str(new_tag.bg_color), str(tid)))
-    conn.commit()
+    if search.check_duplicate_tag_names(get_tags_list(conn), new_tag):
+        # TODO: Handle duplicate tag name
+        print("Tag name '%s' is a duplicate" %(new_tag.tag_name))
+    else:
+        command = 'UPDATE tags SET tag_name = ?, bg_color = ? WHERE id = ?'
+        conn.execute(command, (str(new_tag.tag_name), str(new_tag.bg_color), str(tid)))
+        conn.commit()
 
 def remove_note(conn, nid):
     command = 'DELETE From notes WHERE id = ?'
