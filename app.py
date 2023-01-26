@@ -1,6 +1,4 @@
 '''
-TODO: Prevent duplicate tag names in update_tag case
-TODO: Tag name should not be a prefix of another tag
 TODO: Cache notes and tags, only update local version when changes are made.
 TODO: Optional warning when deleting notes/tags
 TODO: Don't hard code color options
@@ -76,7 +74,7 @@ def tags():
                         tags_list.append(t)
                     else:   # Tag name is not unique
                         #TODO: Notify the user
-                        print("Tag name '%s' is not unique." %(t.tag_name))
+                        print("Tag name '%s' is not valid." %(t.tag_name))
 
             case "update_tag":  # TODO: Update the tags of all notes with old tag
                 tag_id = request.form['tag_id']

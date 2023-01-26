@@ -41,9 +41,18 @@ def find_tag_with_id(tags_list, tid):
             return t
     return None
 
-# Return whether distinct tag in list has same name as new_tag:
-def check_duplicate_tag_names(tags_list, new_tag):
+# Validates that a new tag meets the following criteria:
+#   - new tag name is not a duplicate of a distinct, existing tag name
+#   - new tag name is not a substring of a distinct, existing tag name
+#   - no existing tag name is a substring of the new tag name
+def validate_new_tag_name(tags_list, new_tag):
+    new_name = new_tag.tag_name.strip().lower()
+    new_id = str(new_tag.id)
     for t in tags_list:
-        if t.tag_name == new_tag.tag_name and str(t.id) != str(new_tag.id):
-            return True
-    return False
+        existing_name = t.tag_name.strip().lower()
+        existing_id = str(t.id)
+        if existing_id != new_id and \
+           (new_name.find(existing_name) == 0 or \
+           existing_name.find(new_name) == 0):
+            return False
+    return True

@@ -14,15 +14,15 @@ def add_new_note(conn, n):
 # Returns the ID of the new tag, or None if tag name is a duplicate:
 def add_new_tag(conn, t):
     existing_tags = get_tags_list(conn)
-    if search.check_duplicate_tag_names(existing_tags, t):
-        # TODO: Handle duplicate tag name
-        print("Tag name '%s' is a duplicate" %(t.tag_name))
-        return None
-    else:
+    if search.validate_new_tag_name(existing_tags, t):
         command = 'INSERT INTO tags (tag_name, bg_color) VALUES (?, ?)'
         new_tag_id = conn.execute(command, (str(t.tag_name), str(t.bg_color))).lastrowid
         conn.commit()
         return new_tag_id
+    else:
+        # TODO: Handle invalid tag name case
+        print("Tag name '%s' is invalid" %(t.tag_name))
+        return None
 
 def get_note_by_id(conn, nid):
     command = 'SELECT * from notes where id = ?'
@@ -52,13 +52,13 @@ def update_note(conn, nid, new_note):
 
 # Replaces the tag with the given tag id with the contents of new_tag
 def update_tag(conn, tid, new_tag):
-    if search.check_duplicate_tag_names(get_tags_list(conn), new_tag):
-        # TODO: Handle duplicate tag name
-        print("Tag name '%s' is a duplicate" %(new_tag.tag_name))
-    else:
+    if search.validate_new_tag_name(get_tags_list(conn), new_tag):
         command = 'UPDATE tags SET tag_name = ?, bg_color = ? WHERE id = ?'
         conn.execute(command, (str(new_tag.tag_name), str(new_tag.bg_color), str(tid)))
         conn.commit()
+    else:
+        # TODO: Handle invalid tag name
+        print("Tag name '%s' is a duplicate" %(new_tag.tag_name))
 
 def remove_note(conn, nid):
     command = 'DELETE From notes WHERE id = ?'
