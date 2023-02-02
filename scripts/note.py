@@ -1,9 +1,10 @@
 class Note:
-    def __init__(self, title, body, tag=None, id=None):
+    def __init__(self, title, body, tag=None, id=None, date=None):
         self.id = id
         self.title = title.strip()
         self.body = body
         self.tag = tag
+        self.date = date
         self.editing = False
 
     def update_notes_list(notes_list, nid, new_note):

@@ -105,7 +105,15 @@
                   <input type="hidden" name="note_id" value="{{ note.id }}">
                   <button type="submit" style="padding:0px;border:0px;background-color:inherit;color:inherit;">
                     <h5 class="card-title d-inline me-auto my-1">{{ note.title }}</h5>
-                    <p class="card-text">{{ note.body }}</p>
+                    <p class="card-text">
+                      {{ note.body }}
+                      {% if note.date != "new_note" %}
+                        <p class="text-bg-secondary rounded-pill">{{ note.date }}</p>
+                      {% endif %}
+                    </p>
+                    <!-- {% if note.date %} -->
+                      
+                    <!-- {% endif %} -->
                   </button>
                 </form>
               </div>

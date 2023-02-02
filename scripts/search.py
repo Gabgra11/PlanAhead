@@ -43,7 +43,7 @@ def find_tag_with_id(tags_list, tid):
 
 # Validates that a new tag meets the following criteria:
 #   - new tag name is not a duplicate of a distinct, existing tag name
-#   - new tag name is not a substring of a distinct, existing tag name
+#   - new tag name is not a prefix of a distinct, existing tag name
 #   - no existing tag name is a substring of the new tag name
 def validate_new_tag_name(tags_list, new_tag):
     new_name = new_tag.tag_name.strip().lower()

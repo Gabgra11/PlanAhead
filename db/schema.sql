@@ -6,7 +6,8 @@ CREATE TABLE notes (
     time_created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     tag INTEGER,
     title TEXT NOT NULL,
-    body TEXT
+    body TEXT,
+    date TEXT
 );
 
 CREATE TABLE tags (

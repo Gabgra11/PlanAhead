@@ -2,14 +2,46 @@ from scripts import note, tag, search
 
 # Returns the ID of the new note
 def add_new_note(conn, n):
+    command_beginning = 'INSERT INTO notes ('
+    command_end = 'VALUES ('
+    values = []
+
+    # Build command strings and values list:
     if n.tag:
-        command = 'INSERT INTO notes (tag, title, body) VALUES (?, ?, ?)'
-        new_note_id = conn.execute(command, (str(n.tag.id), str(n.title), str(n.body))).lastrowid
-    else:
-        command = 'INSERT INTO notes (title, body) VALUES (?, ?)'
-        new_note_id = conn.execute(command, (str(n.title), str(n.body))).lastrowid
+        command_beginning += 'tag, '
+        command_end += '?, '
+        values.append(str(n.tag.id))
+    if n.title:
+        command_beginning += 'title, '
+        command_end += '?, '
+        values.append(str(n.title))
+    if n.body:
+        command_beginning += 'body, '
+        command_end += '?, '
+        values.append(str(n.body))
+    if n.date:
+        command_beginning += 'date, '
+        command_end += '?, '
+        values.append(str(n.date))
+    
+    # Remove trailing commas and add closing parentheses:
+    command_beginning = command_beginning[:-2] + ') '
+    command_end = command_end[:-2] + ')'
+    command = command_beginning + command_end
+
+    # Execute command:
+    new_note_id = conn.execute(command, tuple(values)).lastrowid
     conn.commit()
     return new_note_id
+
+    # if n.tag:
+    #     command = 'INSERT INTO notes (tag, title, body) VALUES (?, ?, ?)'
+    #     new_note_id = conn.execute(command, (str(n.tag.id), str(n.title), str(n.body))).lastrowid
+    # else:
+    #     command = 'INSERT INTO notes (title, body) VALUES (?, ?)'
+    #     new_note_id = conn.execute(command, (str(n.title), str(n.body))).lastrowid
+    # conn.commit()
+    # return new_note_id
 
 # Returns the ID of the new tag, or None if tag name is a duplicate:
 def add_new_tag(conn, t):
@@ -42,12 +74,30 @@ def get_tag_by_id(conn, tid):
 
 # Replaces the note with the given note id with the contents of new_note
 def update_note(conn, nid, new_note):
+    command = 'UPDATE notes SET '
+    values = []
+
+    # Build command strings and values list:
     if new_note.tag:
-        command = 'UPDATE notes SET tag = ?, title = ?, body = ? WHERE id = ?'
-        conn.execute(command, (str(new_note.tag.id), str(new_note.title), str(new_note.body), str(nid)))
-    else:
-        command = 'UPDATE notes SET title = ?, body = ? WHERE id = ?'
-        conn.execute(command, (str(new_note.title), str(new_note.body), str(nid)))
+        command += 'tag = ?,'
+        values.append(str(new_note.tag.id))
+    if new_note.title:
+        command += 'title = ?,'
+        values.append(str(new_note.title))
+    if new_note.body:
+        command += 'body = ?,'
+        values.append(str(new_note.body))
+    if new_note.date:
+        command += 'date = ?,'
+        values.append(str(new_note.date))
+    
+    # Remove trailing comma and complete the command string:
+    command = command[:-1]
+    command += ' WHERE id = ?'
+    values.append(str(nid))
+
+    # Execute command:
+    conn.execute(command, tuple(values))
     conn.commit()
 
 # Replaces the tag with the given tag id with the contents of new_tag
@@ -78,11 +128,12 @@ def get_notes_list(conn):
         tid = r[2]
         title = r[3]
         body = r[4]
-        tag_name = r[6]
-        bg_color = r[7]
+        date = r[5]
+        tag_name = r[7]
+        bg_color = r[8]
 
         note_tag = tag.Tag(tag_name, bg_color, tid)
-        notes_list.append(note.Note(title, body, note_tag, nid))
+        notes_list.append(note.Note(title, body, note_tag, nid, date=date))
     return notes_list
 
 def get_tags_list(conn):

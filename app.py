@@ -1,4 +1,8 @@
 '''
+TODO: Add date field to update note form in index.html
+TODO: Add config file for delimiters, google calendar, etc.
+TODO: Add delimiter to indicate start of date (?)
+TODO: Remove tag, date from title when displaying
 TODO: Cache notes and tags, only update local version when changes are made.
 TODO: Optional warning when deleting notes/tags
 TODO: Don't hard code color options
@@ -6,7 +10,7 @@ TODO: Calendar view
 '''
 
 from flask import Flask, render_template, request
-from scripts import note, tag, search, db, tagparser
+from scripts import note, parser, tag, search, db
 import sqlite3
 
 app = Flask(__name__)
@@ -27,13 +31,15 @@ def home():
     filter_list = []
     conn = get_db_connection()
     notes_list = db.get_notes_list(conn)
+    tags_list=db.get_tags_list(conn)
 
     if request.method == "POST":
         match request.form["post_type"]:
             case "new_note":
                 title = request.form["title"]
-                t = tagparser.parse_title_for_tag(title, tags_list)
-                n = note.Note(title, "", t)  # TODO: Add body
+                t = parser.parse_title_for_tag(title, tags_list)
+                date = parser.parse_title_for_date(title)
+                n = note.Note(title=title, body="", tag=t, date=date)  # TODO: Add body
                 n.id = db.add_new_note(conn, n)
                 notes_list.append(n)
             case "filter_by_tag":
