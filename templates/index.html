@@ -65,6 +65,8 @@
                   {% endfor %}
                 </select>
                 <input type="text" name="new_title" value="{{ note.title }}">
+                <input type="datetime-local" name="new_date" value="{{ note.date }}">
+                {{ note.date }}
                 <button type="submit" class="btn btn-primary d-inline ms-3">Update</button>
               </form>
               <form method="POST">

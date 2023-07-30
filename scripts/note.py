@@ -12,3 +12,9 @@ class Note:
             if int(notes_list[i].id) == int(nid):
                 notes_list[i] = new_note
         return notes_list
+    
+    def remove_note_from_list(notes_list, nid):
+        for n in notes_list:
+            if int(n.id) == int(nid):
+                notes_list.remove(n)
+        return notes_list

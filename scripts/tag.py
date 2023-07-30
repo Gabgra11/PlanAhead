@@ -12,7 +12,7 @@ class Tag:
                 tags_list[i] = new_tag
         return tags_list
 
-    def remove_tag(tags_list, tid):
+    def remove_tag_from_list(tags_list, tid):
         for t in tags_list:
             if t.id == tid:
                 tags_list.remove(t)
