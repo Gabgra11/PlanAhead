@@ -1,12 +1,12 @@
 '''
+TODO: Turn off edit mode on all notes if background is clicked.
 TODO: Move db connection code to db.py
-TODO: Remove notes_list, tags_list caching
 TODO: Fix formatting on edit view
 TODO: Fix note date string format
 TODO: Implement search
 TODO: Optional warning when deleting notes/tags
 TODO: Calendar view
-TODO: Notifications
+TODO: Notifications with Celery + redis
 TODO: Switch from SQLite to PostgreSQL
 '''
 
